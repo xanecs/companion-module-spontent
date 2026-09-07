@@ -1,0 +1,28 @@
+{
+	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
+	"type": "connection",
+	"id": "spontent",
+	"name": "spontent",
+	"shortname": "Spontent GFX",
+	"description": "Control Spontent NodeCG volleyball graphics (Stream tab): toggle full-screen graphics, fire player lowerthirds, expose rosters and team names as variables.",
+	"version": "0.0.0",
+	"license": "MIT",
+	"repository": "git+https://github.com/xanecs/companion-module-spontent.git",
+	"bugs": "https://github.com/xanecs/companion-module-spontent/issues",
+	"maintainers": [
+		{
+			"name": "xanecs",
+			"email": "4458913+xanecs@users.noreply.github.com"
+		}
+	],
+	"legacyIds": [],
+	"runtime": {
+		"type": "node22",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../main.js"
+	},
+	"manufacturer": "Spontent",
+	"products": ["NodeCG Graphics"],
+	"keywords": ["nodecg", "volleyball", "graphics", "vbl", "stream"]
+}

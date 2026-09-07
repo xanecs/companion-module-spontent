@@ -1,0 +1,64 @@
+name: Release
+
+# Releasing a version:
+#   1. bump "version" in package.json (major.minor.patch)
+#   2. commit, then tag it as v<version> and push the tag
+#   3. this workflow packages the module and publishes a GitHub release with the .tgz attached
+#   4. submit the tag at https://developer.bitfocus.io/ ("My Connections" -> module -> "Submit Version")
+#
+# A tag containing a hyphen (e.g. v1.2.3-beta.1) is packaged and published as a prerelease.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  package:
+    name: Package module
+    # Runs the same checks as every push, plus the tag/package.json version match,
+    # and uploads the packaged module as the "pkg" artifact.
+    permissions:
+      packages: read
+    uses: bitfocus/actions/.github/workflows/module-checks.yaml@main
+    with:
+      upload-artifact: true
+      prerelease: ${{ contains(github.ref_name, '-') }}
+
+  release:
+    name: Publish release
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download package
+        uses: actions/download-artifact@v6
+        with:
+          name: pkg
+
+      - name: Name the package after the tag
+        id: rename
+        run: |
+          FILENAME="spontent-${GITHUB_REF_NAME}.tgz"
+          mv pkg.tgz "$FILENAME"
+          echo "filename=$FILENAME" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXTRA_ARGS=""
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            EXTRA_ARGS="--prerelease"
+          fi
+
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            $EXTRA_ARGS \
+            "${{ steps.rename.outputs.filename }}"
