@@ -8,9 +8,10 @@ jobs:
     name: Check module
 
     permissions:
+      contents: read
       packages: read
 
-    uses: bitfocus/actions/.github/workflows/module-checks.yaml@main
+    uses: ./.github/workflows/module-checks.yaml
     with:
       # Attach the built package to the workflow run, so it can be downloaded and sideloaded for testing
       upload-artifact: true

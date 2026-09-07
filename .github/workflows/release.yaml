@@ -19,8 +19,9 @@ jobs:
     # Runs the same checks as every push, plus the tag/package.json version match,
     # and uploads the packaged module as the "pkg" artifact.
     permissions:
+      contents: read
       packages: read
-    uses: bitfocus/actions/.github/workflows/module-checks.yaml@main
+    uses: ./.github/workflows/module-checks.yaml
     with:
       upload-artifact: true
       prerelease: ${{ contains(github.ref_name, '-') }}
